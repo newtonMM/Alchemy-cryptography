@@ -28,12 +28,15 @@ app.post("/send", (req, res) => {
   signature.r = BigInt(signature.r);
 	signature.s = BigInt(signature.s);
 
-  secp256k1.verify(signature,)
+  
   console.log(signature)
   const publicKey = toHex(Buffer.from(secp256k1.getPublicKey(privateKey)))
 // const BytespublicKey = utf8ToBytes(publicKey)
-console.log(publicKey)
 
+const isValid =secp256k1.verify(signature,hash,publicKey)
+if(!isValid){
+  return res.status(400).send({ message: "Invalid sender" });
+}
  
   if(balances[publicKey] < amount){
     const error = new Error ("insuffcient balance")
