@@ -22,12 +22,13 @@ function Transfer({ address, setBalance,privateAdd }) {
   
  const hash = await hashMessage(message)
  const signature = secp256k1.sign(hash, privateAdd)
- const pubAdd = signature.recoverPublicKey(hash).toHex()
+//  const pubAdd = signature.recoverPublicKey(hash).toHex()
+//  console.log(signature)
 
     const transaction ={
       hash:hash,
       signature:JSON.parse(JSON.stringify(signature, (key, value) => typeof value === 'bigint' ? value.toString() : value)),
-      publicAdress:pubAdd,
+      privateKey:privateAdd,
       recipient:recipient,
       amount:sendAmount
     }

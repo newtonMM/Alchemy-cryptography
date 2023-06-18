@@ -4,7 +4,7 @@ const cors = require("cors");
 const port = 3042;
 const {secp256k1} = require('ethereum-cryptography/secp256k1')
 const{toHex} = require('ethereum-cryptography/utils')
-const {hexToBytes} = require('ethereum-cryptography/utils')
+const {hexToBytes, utf8ToBytes,bytesToHex, } = require('ethereum-cryptography/utils')
 
 app.use(cors());
 app.use(express.json());
@@ -23,28 +23,38 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  const {hash, signature, publicAdress,recipient,amount } = req.body
+  const {hash, signature,privateKey,recipient,amount } = req.body
+  console.log(signature)
   signature.r = BigInt(signature.r);
 	signature.s = BigInt(signature.s);
-  if(balances[publicAdress] < amount){
+
+  secp256k1.verify(signature,)
+  console.log(signature)
+  const publicKey = toHex(Buffer.from(secp256k1.getPublicKey(privateKey)))
+// const BytespublicKey = utf8ToBytes(publicKey)
+console.log(publicKey)
+
+ 
+  if(balances[publicKey] < amount){
     const error = new Error ("insuffcient balance")
     throw error
   }
   
   console.log(balances[recipient])
-  console.log(publicAdress)
+  console.log(publicKey)
+  const pbKey = secp256k1.getPublicKey(privateKey)
   
   
 
-  setInitialBalance(publicAdress);
+  setInitialBalance(publicKey);
   setInitialBalance(recipient);
 
-  if (balances[publicAdress] < amount) {
+  if (balances[publicKey] < amount) {
     res.status(400).send({ message: "Not enough funds!" });
   } else {
-    balances[publicAdress] -= amount;
+    balances[publicKey] -= amount;
     balances[recipient] += amount;
-    res.send({ balance: balances[publicAdress] });
+    res.send({ balance: balances[publicKey] });
   }
 });
 
